@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Login from '../pages/login.jsx'
-import Dashboard from '../pages/Dashboard.js'
+import Dashboard from '../pages/dashboard.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 
 const AppRoutes = () => {
