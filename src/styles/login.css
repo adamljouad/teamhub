@@ -1,0 +1,30 @@
+.login-page {
+  background-color: rgb(238, 238, 238);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.input-containers {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.email-input {
+  margin-bottom: 10px;
+}
+
+.login-button {
+  margin: 0 auto;
+  width: 180px;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
