@@ -27,6 +27,9 @@ function Login() {
 
   return (
     <div className='login-page'>
+      <div className='team-hub'>
+        <h1>TeamHUB</h1>
+      </div>
       <div className='Header'>
         <h1>Login</h1>
       </div>
