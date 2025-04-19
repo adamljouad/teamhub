@@ -8,6 +8,18 @@ function Dashboard() {
   const [requestCategory, setRequestCategory] = useState('');
   const [holidayDate, setHolidayDate] = useState('');
   const { logout } = useAuth()
+  const [requests, setRequests] = useState([])
+
+  const handleRequestSubmit = (e) => {
+    e.preventDefault();
+
+    setRequests(prev => [...prev, {
+      category: requestCategory,
+      requestDate: holidayDate
+    }])
+    console.log(requests)
+  }
+
 
   const goOut = (e) => {
     e.preventDefault()
@@ -32,7 +44,7 @@ function Dashboard() {
         <button onClick={goOut}>Log Out</button>
       </div>
       <div className="dashboard-content">
-        <form className='request-form'>
+        <form className='request-form' onSubmit={handleRequestSubmit}>
           <label>
             Tipo Richiesta:
             <select value={requestCategory} onChange={(e) => setRequestCategory(e.target.value)}>
@@ -45,7 +57,7 @@ function Dashboard() {
             Data Richiesta:
             <input type='date' value={holidayDate} onChange={(e) => setHolidayDate(e.target.value)}></input>
           </label>
-          <button type='submit' onClick={console.log(requestCategory, holidayDate)}>Invia Richiesta</button>
+          <button type='submit'>Invia Richiesta</button>
         </form>
       </div>
     </div>
