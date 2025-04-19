@@ -8,7 +8,11 @@ function Dashboard() {
   const [requestCategory, setRequestCategory] = useState('');
   const [holidayDate, setHolidayDate] = useState('');
   const { logout } = useAuth()
-  const [requests, setRequests] = useState([])
+  const [requests, setRequests] = useState([]);
+  const [holidayBalance, setHolidayBalance] = useState({
+    ferie: 20,
+    permesso: 8
+  })
 
   const handleRequestSubmit = (e) => {
     e.preventDefault();
@@ -59,6 +63,9 @@ function Dashboard() {
           </label>
           <button type='submit'>Invia Richiesta</button>
         </form>
+        {requestCategory === 'permesso' && <input type='time'></input>}
+        <h1>Ferie Rimanente: {holidayBalance.ferie} Giorni</h1>
+        <h1>Ore permesso rimanenti: {holidayBalance.permesso} Ore</h1>
       </div>
     </div>
   </div>
