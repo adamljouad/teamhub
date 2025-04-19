@@ -24,7 +24,6 @@ function Login() {
   }
 
 
-
   return (
     <div className='login-page'>
       <div className='team-hub'>

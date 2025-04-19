@@ -7,6 +7,18 @@ import '../styles/dashboard.css'
 function Dashboard() {
   const [requestCategory, setRequestCategory] = useState('');
   const [holidayDate, setHolidayDate] = useState('');
+  const { logout } = useAuth()
+
+  const goOut = (e) => {
+    e.preventDefault()
+
+    try {
+      logout()
+    }
+    catch (err) {
+      setError('errore nel logout')
+    }
+  }
 
 
 
@@ -17,6 +29,7 @@ function Dashboard() {
     <div className="dashboard-main">
       <div className="dashboard-header">
         <h1>Benvenuto in TeamHub</h1>
+        <button onClick={goOut}>Log Out</button>
       </div>
       <div className="dashboard-content">
         <form className='request-form'>

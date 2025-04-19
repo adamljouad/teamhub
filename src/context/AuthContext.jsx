@@ -4,15 +4,20 @@ const AuthContext = createContext();
 
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   const isAuthenticated = !!user;
 
   const login = (email, password) => {
-    // logica simulata di login
-    setUser({ email }); // poi lo puoi estendere
+    setUser({ email });
+    localStorage.setItem('user', JSON.stringify({email}));
   };
 
   const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
     setUser(null);
   };
 
