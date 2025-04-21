@@ -5,23 +5,49 @@ import '../styles/dashboard.css'
 
 
 function Dashboard() {
-  const [requestCategory, setRequestCategory] = useState('');
-  const [holidayDate, setHolidayDate] = useState('');
+  const [requestCategory, setRequestCategory] = useState('ferie');
   const { logout } = useAuth()
   const [requests, setRequests] = useState([]);
   const [holidayBalance, setHolidayBalance] = useState({
     ferie: 20,
     permesso: 8
-  })
+  });
+  const [permessoDate, setPermessoDate] = useState('');
+  const [permessoStart, setPermessoStart] = useState('');
+  const [permessoEnd, setPermessoEnd] = useState('');
+  const [ferieStart, setFerieStart] = useState('');
+  const [ferieEnd, setFerieEnd] = useState('');
+
+
 
   const handleRequestSubmit = (e) => {
     e.preventDefault();
 
-    setRequests(prev => [...prev, {
-      category: requestCategory,
-      requestDate: holidayDate
-    }])
     console.log(requests)
+    let newRequest = {
+      category: requestCategory,
+      requestDate: ferieStart
+    };
+  
+    if (requestCategory === 'permesso') {
+      newRequest.startDate = permessoDate;
+      newRequest.startTime = permessoStart;
+      newRequest.endTime = permessoEnd;
+    } else if (requestCategory === 'ferie') {
+      const start = new Date(ferieStart)
+      const end = new Date(ferieEnd)
+
+      const timeDiff = end - start;
+      const daysDiff = timeDiff/ (1000 * 60 * 60 * 24) + 1;
+      if (daysDiff > 0 && daysDiff <= holidayBalance.ferie) {
+        setHolidayBalance(prev => ({...prev, ferie: prev.ferie - daysDiff}))
+      }
+      newRequest.startDate === ferieStart
+      newRequest.endDate = ferieEnd
+      newRequest.days = daysDiff
+    }
+    setRequests(prev => [...prev, newRequest]);
+    console.log(newRequest);
   }
 
 
@@ -48,25 +74,52 @@ function Dashboard() {
         <button onClick={goOut}>Log Out</button>
       </div>
       <div className="dashboard-content">
-        <form className='request-form' onSubmit={handleRequestSubmit}>
-          <label>
-            Tipo Richiesta:
-            <select value={requestCategory} onChange={(e) => setRequestCategory(e.target.value)}>
-              <option value="ferie">Ferie</option>
-              <option value="permesso">Permesso</option>
-            </select>
-          </label>
+      <form className='request-form' onSubmit={handleRequestSubmit}>
+      <label>
+        Tipo Richiesta:
+        <select value={requestCategory} onChange={(e) => setRequestCategory(e.target.value)}>
+          <option value="ferie">Ferie</option>
+          <option value="permesso">Permesso</option>
+        </select>
+      </label>
 
+      {requestCategory === 'permesso' && (
+        <>
           <label>
-            Data Richiesta:
-            <input type='date' value={holidayDate} onChange={(e) => setHolidayDate(e.target.value)}></input>
+            Data Richiesta
+            <input type='date' className='input-date-permesso' value={permessoDate} onChange={(e) => setPermessoDate(e.target.value)}></input>
           </label>
-          <button type='submit'>Invia Richiesta</button>
-        </form>
-        {requestCategory === 'permesso' && <input type='time'></input>}
-        <h1>Ferie Rimanente: {holidayBalance.ferie} Giorni</h1>
-        <h1>Ore permesso rimanenti: {holidayBalance.permesso} Ore</h1>
+          <label>
+            Da:
+            <input type='time' className='time-input' value={permessoStart} onChange={(e) => setPermessoStart(e.target.value)} />
+          </label>
+          <label>
+            A:
+            <input type='time' className='time-input' value={permessoEnd} onChange={(e) => setPermessoEnd(e.target.value)} />
+          </label>
+        </>
+      )}
+      {requestCategory === 'ferie' && (
+        <>
+          <label>
+            Da:
+            <input type='date' className='time-input' value={ferieStart} onChange={(e) => setFerieStart(e.target.value)} />
+          </label>
+          <label>
+            A:
+            <input type='date' className='time-input' value={ferieEnd} onChange={(e) => setFerieEnd(e.target.value)} />
+          </label>
+        </>
+      )}
+      <button type='submit'>Invia Richiesta</button>
+    </form>
       </div>
+      <div className="holiday-info">
+          <h2>Ferie rimanenti:</h2>
+          <p>{holidayBalance.ferie} giorni</p>
+          <h2>Ore permesso rimanenti:</h2>
+          <p>{holidayBalance.permesso} ore</p>
+        </div>
     </div>
   </div>
   
