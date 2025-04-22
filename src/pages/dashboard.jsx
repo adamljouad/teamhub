@@ -1,10 +1,12 @@
 import { useAuth } from '../context/AuthContext'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../styles/dashboard.css'
 
 
 function Dashboard() {
+  const [data, setData] = useState(null);
+
   const [requestCategory, setRequestCategory] = useState('ferie');
   const { logout } = useAuth()
   const [requests, setRequests] = useState([]);
