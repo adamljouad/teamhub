@@ -33,7 +33,7 @@ function Login() {
   
       if (response.ok) {
         setMessage('Login effettuato con successo');
-        login(userEmail);
+        login(userEmail, userPassword);
         navigate('/dashboard');
       } else {
         setMessage(data.message);

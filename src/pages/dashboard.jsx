@@ -6,6 +6,7 @@ import '../styles/dashboard.css'
 
 function Dashboard() {
   const [data, setData] = useState(null);
+  const navigate = useNavigate()
 
   const [requestCategory, setRequestCategory] = useState('ferie');
   const { logout } = useAuth()
@@ -19,6 +20,7 @@ function Dashboard() {
   const [permessoEnd, setPermessoEnd] = useState('');
   const [ferieStart, setFerieStart] = useState('');
   const [ferieEnd, setFerieEnd] = useState('');
+  const { user } = useAuth();
 
   const handleRequestSubmit = async (e) => {
     e.preventDefault();
@@ -28,7 +30,7 @@ function Dashboard() {
         headers: {
           'Content-Type':'application/json',
         },
-        body: JSON.stringify({category: requestCategory, start_date: ferieStart, end_date: ferieEnd, user_id: 1})
+        body: JSON.stringify({category: requestCategory, start_date: ferieStart, end_date: ferieEnd, user_id: user.id})
       })
       const data = await response.json();
       if (response.ok) {
@@ -42,38 +44,23 @@ function Dashboard() {
 
   }
 
-
-  /*
-  const handleRequestSubmit = (e) => {
-    e.preventDefault();
-
-    console.log(requests)
-    let newRequest = {
-      category: requestCategory,
-      requestDate: ferieStart
-    };
-  
-    if (requestCategory === 'permesso') {
-      newRequest.startDate = permessoDate;
-      newRequest.startTime = permessoStart;
-      newRequest.endTime = permessoEnd;
-    } else if (requestCategory === 'ferie') {
-      const start = new Date(ferieStart)
-      const end = new Date(ferieEnd)
-
-      const timeDiff = end - start;
-      const daysDiff = timeDiff/ (1000 * 60 * 60 * 24) + 1;
-      if (daysDiff > 0 && daysDiff <= holidayBalance.ferie) {
-        setHolidayBalance(prev => ({...prev, ferie: prev.ferie - daysDiff}))
-      }
-      newRequest.startDate === ferieStart
-      newRequest.endDate = ferieEnd
-      newRequest.days = daysDiff
+  const showReq = async () => {
+    try {
+      const response = await fetch(`http://localhost:19246/requests?user_id=${parseInt(user.id)}`)
+      const data = await response.json();
+      setRequests(data);
+    } catch (err) {
+      console.error('Errore nel recupero delle richieste', err)
     }
-    setRequests(prev => [...prev, newRequest]);
-    console.log(newRequest);
-  }
-  */
+  };
+
+  useEffect(() => {
+    if (user?.id) {
+      showReq();
+    }
+  }, [user]);
+  
+
 
 
   const goOut = (e) => {
@@ -91,8 +78,10 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
-    <div className="dashboard-sidebar"></div>
-  
+    <div className="dashboard-sidebar">
+      <button onClick={() => {navigate('/login')}}>My requests</button>
+      <h2>Settings</h2>
+    </div>
     <div className="dashboard-main">
       <div className="dashboard-header">
         <h1>Benvenuto in TeamHub</h1>
@@ -145,6 +134,16 @@ function Dashboard() {
           <h2>Ore permesso rimanenti:</h2>
           <p>{holidayBalance.permesso} ore</p>
         </div>
+        <div className='requests-div'>
+      {requests.map(req => (
+        <div key={req.id}>
+          <p>Categoria: {req.category}</p>
+          <p>Data inizio: {req.start_date}</p>
+          <p>Data fine: {req.end_date}</p>
+          <p>Status: {req.status}</p>
+        </div>
+        ))}
+      </div>
     </div>
   </div>
   

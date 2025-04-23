@@ -71,14 +71,22 @@ app.post('/requests', async (req, res) => {
 })
 
 app.get('/requests', async (req, res) => {
+  const { user_id } = req.query; 
+
+  let result;
   try {
-    const result = await pool.query('SELECT * FROM requests');
-    res.json(result.rows);
+    if (user_id) {
+      result = await pool.query('SELECT * FROM requests WHERE user_id = $1', [user_id]);
+    } else {  
+      result = await pool.query('SELECT * FROM requests');
+    }
+    res.status(200).json(result.rows); 
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Errore nel server');
+    console.error('Errore nel recupero delle richieste:', err);
+    res.status(500).json({ message: 'Errore del server' });
   }
 });
+
 
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -101,7 +109,14 @@ app.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Password errata' });
     }
 
-    res.status(200).json({ message: 'Login effettuato con successo' });
+    res.status(200).json({
+      message: 'Login effettuato con successo',
+      user: {
+        id: user.id,
+        email: user.email
+      }
+    });
+    
   } catch (err) {
     console.error('Errore durante il login', err);
     res.status(500).json({ message: 'Errore del server' });

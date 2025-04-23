@@ -110,6 +110,10 @@
   transition: background-color 0.2s ease;
 }
 
+.requests-div {
+  display: flex;
+}
+
 .request-form button:hover {
   background-color: #005fce;
 }

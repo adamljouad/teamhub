@@ -10,10 +10,29 @@ const AuthProvider = ({ children }) => {
   });
   const isAuthenticated = !!user;
 
-  const login = (email, password) => {
-    setUser({ email });
-    localStorage.setItem('user', JSON.stringify({email}));
+  const login = async (email, password) => {
+    try {
+      const response = await fetch('http://localhost:19246/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        setUser(data.user);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      console.error('Errore nel login:', err);
+    }
   };
+  
 
   const logout = () => {
     setUser(null);
