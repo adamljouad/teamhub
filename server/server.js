@@ -11,8 +11,10 @@ const app = express();
 const port = 19246;
 
 app.use(cors());
-app.use(express.json()); // 👈 NECESSARIO
-app.use(express.urlencoded({ extended: true })); // 👈 CONSIGLIATO
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: true })); 
+console.log("🔧 Connessione al DB con:", process.env.DATABASE_URL);
+
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -27,6 +29,55 @@ pool.connect()
 
 app.get('/api', (req, res) => {
   res.json({ message: 'API attiva' });
+});
+
+app.post('/requests', async (req, res) => {
+  const {
+    category,
+    start_date,
+    start_time,
+    end_date,
+    end_time,
+    user_id,
+    date
+  } = req.body;
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO requests (
+        category, start_date, start_time,
+        end_date, end_time, user_id,
+        date, status
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+       [
+        category,
+        start_date,
+        start_time,
+        end_date,
+        end_time,
+        user_id,
+        date,
+        'in attesa'
+       ]
+    )
+    res.status(201).json({
+      message: 'Richiesta creata con successo',
+      request: result.rows[0]
+    })
+  } catch (err) {
+    console.error('Errore durante la rchiesta', err);
+    res.status(500).json({message: 'Errore del server'})
+  }
+})
+
+app.get('/requests', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM requests');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Errore nel server');
+  }
 });
 
 app.post('/login', async (req, res) => {

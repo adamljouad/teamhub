@@ -20,8 +20,30 @@ function Dashboard() {
   const [ferieStart, setFerieStart] = useState('');
   const [ferieEnd, setFerieEnd] = useState('');
 
+  const handleRequestSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('http://localhost:19246/requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type':'application/json',
+        },
+        body: JSON.stringify({category: requestCategory, start_date: ferieStart, end_date: ferieEnd, user_id: 1})
+      })
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Richiesta salvata')
+      } else {
+        console.log('problema nella richiesta')
+      }
+    } catch (err) {
+      console.error('Errore nel server', err)
+    }
+
+  }
 
 
+  /*
   const handleRequestSubmit = (e) => {
     e.preventDefault();
 
@@ -51,6 +73,7 @@ function Dashboard() {
     setRequests(prev => [...prev, newRequest]);
     console.log(newRequest);
   }
+  */
 
 
   const goOut = (e) => {
